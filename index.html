@@ -50,11 +50,12 @@
         <div class="row">
             <div class="col s12 m6">
                 <div class="row">
-                    <a id="btn_run" class="waves-effect waves-light btn">Run</a>
+                    <a id="btn_run" class="btn">Run</a>
                     <!-- a id="btn_clear" class="waves-effect waves-light btn">Clear</a -->
+                    <a id="btn_brightness" class="right btn-flat"><i class="material-icons">brightness_5</i></a>
                 </div>
                 <div class="row">
-                    <div id="editor" style="width:98%; border:1px solid grey;"></div>
+                    <div id="editor" style="width:100%; border:1px solid grey;"></div>
                 </div>
             </div>
             <div class="col s12 m6">
@@ -122,8 +123,8 @@ def reset_editor():
 
 def reset_turtle():
     turtle.restart()
-    turtle.set_defaults(turtle_canvas_wrapper=document['turtle-div'])
-    
+    turtle.set_defaults(turtle_canvas_wrapper=document["turtle-div"])
+
 
 # Run the script
 def btn_run_click(*args):
@@ -133,7 +134,7 @@ def btn_run_click(*args):
         storage["py_src"] = src
 
     reset_turtle()
-    
+
     t0 = time.perf_counter()
     try:
         ns = {"__name__": "__main__"}
@@ -145,7 +146,7 @@ def btn_run_click(*args):
     sys.stdout.flush()
 
     print("<completed in %6.2f ms>" % ((time.perf_counter() - t0) * 1000.0))
-    
+
     return state
 
 
@@ -153,6 +154,16 @@ def btn_run_click(*args):
 def btn_clear_click(*args):
     document["console"].value = ""
     reset_turtle()
+
+
+# Switch between Light and Dark mode
+def btn_brightness_click(*args):
+    if document["btn_brightness"].lastChild.text == "brightness_5":
+        document["btn_brightness"].lastChild.text = "brightness_4"
+        editor.setTheme("ace/theme/dracula")
+    else:
+        document["btn_brightness"].lastChild.text = "brightness_5"
+        editor.setTheme("ace/theme/chrome")
 
 
 class cOutput:
@@ -178,11 +189,11 @@ class cOutput:
 # from interpreter import Interpreter
 # Interpreter(globals=globals())
 
-# set height of editor_container to 80% of screen
-_height = document.documentElement.clientHeight
-document["editor"].style.height = f"{int(_height * 0.80)}px"
-document["console"].style.height = f"{int(_height * 0.80)}px"
-document["turtle-div"].style.height = f"{int(_height * 0.80)}px"
+# Set height of editor_container to fit the screen
+_height = int((document.documentElement.clientHeight - 150) * 0.95)
+document["editor"].style.height = f"{_height}px"
+document["console"].style.height = f"{_height}px"
+document["turtle-div"].style.height = f"{_height}px"
 
 try:
     editor = window.ace.edit("editor")
@@ -196,7 +207,7 @@ try:
             "highlightSelectedWord": True,
         }
     )
-    
+
     has_ace = True
 except:
     editor = html.TEXTAREA(rows=20, cols=70)
@@ -210,7 +221,7 @@ except:
 
     editor.getValue = get_value
     editor.setValue = set_value
-    
+
     has_ace = False
 
 # Expose editor to glabal environment, so it can be tuned on the fly
@@ -235,7 +246,8 @@ reset_editor()
 reset_turtle()
 
 document["btn_run"].bind("click", lambda *args: btn_run_click())
-#document["btn_clear"].bind("click", lambda *args: btn_clear_click())
+# document["btn_clear"].bind("click", lambda *args: btn_clear_click())
+document["btn_brightness"].bind("click", lambda *args: btn_brightness_click())
 
 # Must do window.M.AutoInit() after all html being loaded!
 window.M.AutoInit()
