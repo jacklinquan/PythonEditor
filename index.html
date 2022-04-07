@@ -47,32 +47,34 @@
         <p></p>
     </div>
     
-    <div class="container">
-        <div class="row">
-            <div class="col s12 m12 l6">
-                <div class="row">
-                    <a id="btn_run" class="btn">Run</a>
-                    <!-- a id="btn_clear" class="waves-effect waves-light btn">Clear</a -->
-                    <a id="btn_brightness" class="right btn-flat"><i class="material-icons">brightness_5</i></a>
-                </div>
-                <div class="row">
-                    <div id="editor" style="width:100%; border:1px solid grey; font-size:16px;"></div>
-                </div>
-            </div>
-            <div class="col s12 m12 l6">
-                <div class="row">
-                    <div class="col s12" style="height:56px;">
-                        <ul class="tabs">
-                            <li class="tab col s3"><a href="#tab0" class="active teal-text">Output</a></li>
-                            <li class="tab col s3"><a href="#tab1" class="teal-text">Turtle</a></li>
-                        </ul>
+    <div class="row">
+        <div class="col offset-s1 s10">
+            <div class="row">
+                <div class="col s12 m12 l6">
+                    <div class="row">
+                        <a id="btn_run" class="btn">Run</a>
+                        <!-- a id="btn_clear" class="waves-effect waves-light btn">Clear</a -->
+                        <a id="btn_brightness" class="right btn-flat"><i class="material-icons">brightness_4</i></a>
                     </div>
-                    
-                    <div id="tab0" class="col s12">
-                        <textarea id="console" autocomplete="off" readonly style="width:100%; height:100%; resize:none; font-size:16px; font-family:Consolas; background-color:black; color:white; border:1px solid grey;"></textarea>
+                    <div class="row">
+                        <div id="editor" style="width:100%; border:1px solid grey; font-size:16px;"></div>
                     </div>
-                    <div id="tab1" class="col s12">
-                        <div id="turtle-div" style="border:1px solid grey;"></div>
+                </div>
+                <div class="col s12 m12 l6">
+                    <div class="row">
+                        <div class="col s12" style="height:56px;">
+                            <ul class="tabs">
+                                <li class="tab col s3"><a href="#tab0" class="active teal-text">Output</a></li>
+                                <li class="tab col s3"><a href="#tab1" class="teal-text">Turtle</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div id="tab0" class="col s12">
+                            <textarea id="console" autocomplete="off" readonly style="width:100%; height:100%; resize:none; font-size:16px; font-family:Consolas; background-color:black; color:white; border:1px solid grey;"></textarea>
+                        </div>
+                        <div id="tab1" class="col s12">
+                            <div id="turtle-div" style="border:1px solid grey;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,7 +103,7 @@ def reset_src():
         if storage is not None and "py_src" in storage:
             editor.setValue(storage["py_src"])
         else:
-            editor.setValue("for i in range(10):\n\tprint(i)")
+            editor.setValue("for i in range(10):\n    print(i)")
         if "py_test" in storage and "files" in document:
             document["files"].selectedIndex = int(storage["py_test"])
     editor.scrollToRow(0)
@@ -112,7 +114,7 @@ def reset_src_area():
     if storage and "py_src" in storage:
         editor.value = storage["py_src"]
     else:
-        editor.value = "for i in range(10):\n\tprint(i)"
+        editor.value = "for i in range(10):\n    print(i)"
 
 
 def reset_editor():
@@ -146,7 +148,7 @@ def btn_run_click(*args):
         state = 0
     sys.stdout.flush()
 
-    print("<completed in %6.2f ms>" % ((time.perf_counter() - t0) * 1000.0))
+    print(f"<completed in {((time.perf_counter() - t0) * 1000.0):6.2f} ms>")
 
     return state
 
@@ -159,12 +161,12 @@ def btn_clear_click(*args):
 
 # Switch between Light and Dark mode
 def btn_brightness_click(*args):
-    if document["btn_brightness"].lastChild.text == "brightness_5":
-        document["btn_brightness"].lastChild.text = "brightness_4"
-        editor.setTheme("ace/theme/dracula")
-    else:
+    if document["btn_brightness"].lastChild.text == "brightness_4":
         document["btn_brightness"].lastChild.text = "brightness_5"
         editor.setTheme("ace/theme/chrome")
+    else:
+        document["btn_brightness"].lastChild.text = "brightness_4"
+        editor.setTheme("ace/theme/dracula")
 
 
 class cOutput:
@@ -191,14 +193,14 @@ class cOutput:
 # Interpreter(globals=globals())
 
 # Set height of editor_container to fit the screen
-_height = int((document.documentElement.clientHeight - 150) * 0.95)
+_height = int(document.documentElement.clientHeight - 205)
 document["editor"].style.height = f"{_height}px"
 document["console"].style.height = f"{_height}px"
 document["turtle-div"].style.height = f"{_height}px"
 
 try:
     editor = window.ace.edit("editor")
-    editor.setTheme("ace/theme/chrome")
+    editor.setTheme("ace/theme/dracula")
     editor.session.setMode("ace/mode/python")
     editor.focus()
     editor.setOptions(
